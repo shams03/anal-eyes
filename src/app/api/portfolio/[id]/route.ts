@@ -5,18 +5,15 @@ import { prisma } from "@/lib/db";
 import { fetchBatchPrices } from "@/lib/priceFetcher";
 import { generatePortfolioInsights } from "@/lib/gemini";
 
-type RouteContext = {
-  params: {
-    id: string;
-  };
-};
-
 // GET portfolio by ID
-export async function GET(request: NextRequest, context: RouteContext) {
+export async function GET(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
   try {
     const session = await getServerSession(authOptions);
     const portfolio = await prisma.portfolio.findUnique({
-      where: { id: context.params.id },
+      where: { id: params.id },
       include: {
         holdings: true,
         user: {
@@ -91,7 +88,10 @@ export async function GET(request: NextRequest, context: RouteContext) {
 }
 
 // Update portfolio
-export async function PUT(request: NextRequest, context: RouteContext) {
+export async function PUT(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
   try {
     const session = await getServerSession(authOptions);
     if (!session) {
@@ -106,7 +106,7 @@ export async function PUT(request: NextRequest, context: RouteContext) {
 
     // Verify portfolio exists and user has ownership
     const existingPortfolio = await prisma.portfolio.findUnique({
-      where: { id: context.params.id },
+      where: { id: params.id },
       include: { user: true },
     });
 
@@ -126,7 +126,7 @@ export async function PUT(request: NextRequest, context: RouteContext) {
 
     // Update portfolio
     const updatedPortfolio = await prisma.portfolio.update({
-      where: { id: context.params.id },
+      where: { id: params.id },
       data: {
         name,
         description,
@@ -140,7 +140,7 @@ export async function PUT(request: NextRequest, context: RouteContext) {
     if (holdings && Array.isArray(holdings)) {
       // Delete existing holdings first
       await prisma.holding.deleteMany({
-        where: { portfolioId: context.params.id },
+        where: { portfolioId: params.id },
       });
 
       // Create new holdings
@@ -150,7 +150,7 @@ export async function PUT(request: NextRequest, context: RouteContext) {
             symbol: holding.symbol,
             name: holding.name,
             quantity: holding.quantity,
-            portfolioId: context.params.id,
+            portfolioId: params.id,
           },
         });
       }
@@ -158,7 +158,7 @@ export async function PUT(request: NextRequest, context: RouteContext) {
 
     // Generate new insights
     const updatedPortfolioWithHoldings = await prisma.portfolio.findUnique({
-      where: { id: context.params.id },
+      where: { id: params.id },
       include: { holdings: true },
     });
 
@@ -187,7 +187,7 @@ export async function PUT(request: NextRequest, context: RouteContext) {
 
     // Update with new insights
     await prisma.portfolio.update({
-      where: { id: context.params.id },
+      where: { id: params.id },
       data: {
         insightSummary: insights,
       },
@@ -206,7 +206,10 @@ export async function PUT(request: NextRequest, context: RouteContext) {
   }
 }
 
-export async function DELETE(request: NextRequest, context: RouteContext) {
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
   const session = await getServerSession(authOptions);
   // ... rest of the function implementation ...
 }
