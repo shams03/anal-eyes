@@ -128,7 +128,7 @@ export default async function SharedPortfolioPage({
             <div className="ml-3">
               <p className="text-sm text-indigo-700">
                 This is a shared view of {portfolioData.creatorName || "a user"}
-                's portfolio.
+                &apos;s portfolio.
                 <span className="ml-1 font-medium">
                   Viewed {portfolioData.viewCount} times.
                 </span>

@@ -82,7 +82,7 @@ export default async function Home() {
               <h3 className="text-xl font-semibold mb-2">AI Insights</h3>
               <p className="text-gray-600">
                 Get intelligent portfolio analysis and recommendations powered
-                by Google's Gemini AI.
+                by Google&apos;s Gemini AI.
               </p>
             </div>
             <div className="bg-white p-6 rounded-lg shadow-md">

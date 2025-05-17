@@ -10,7 +10,7 @@ interface Holding {
 }
 
 interface PortfolioFormProps {
-  userId: string;
+  userId?: string;
   initialData?: {
     id?: string;
     name: string;
@@ -21,10 +21,7 @@ interface PortfolioFormProps {
   };
 }
 
-export default function PortfolioForm({
-  userId,
-  initialData,
-}: PortfolioFormProps) {
+export default function PortfolioForm({ initialData }: PortfolioFormProps) {
   const router = useRouter();
   const isEditing = !!initialData?.id;
 

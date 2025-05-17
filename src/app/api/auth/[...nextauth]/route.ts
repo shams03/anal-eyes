@@ -40,7 +40,7 @@ export const authOptions: NextAuthOptions = {
     strategy: "jwt",
   },
   callbacks: {
-    async jwt({ token, user, account }) {
+    async jwt({ token, user }) {
       // console.log("JWT Callback:", { token, user, account });
       if (user) {
         // Find the user in the database based on their email
