@@ -1,0 +1,107 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id             String     @id @default(auto()) @map("_id") @db.ObjectId
+  email          String     @unique
+  name           String?
+  image          String?
+  emailVerified  DateTime?
+  portfolios     Portfolio[]
+  accessedTokenIds String[] @db.ObjectId
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+  accounts       Account[]
+  sessions       Session[]
+}
+
+model Portfolio {
+  id              String    @id @default(auto()) @map("_id") @db.ObjectId
+  name            String
+  description     String?
+  visibility      Visibility @default(PRIVATE)
+  cash            Float     @default(0)
+  userId          String    @db.ObjectId
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  holdings        Holding[]
+  sharedAccess    SharedPortfolioAccess?
+  insightSummary  String?
+  lastUpdated     DateTime  @default(now())
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
+model Holding {
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  symbol      String
+  name        String
+  quantity    Float
+  portfolioId String    @db.ObjectId
+  portfolio   Portfolio @relation(fields: [portfolioId], references: [id], onDelete: Cascade)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@unique([portfolioId, symbol])
+}
+
+model SharedPortfolioAccess {
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  token         String   @unique
+  portfolioId   String   @unique @db.ObjectId
+  portfolio     Portfolio @relation(fields: [portfolioId], references: [id], onDelete: Cascade)
+  isRevoked     Boolean  @default(false)
+  viewCount     Int      @default(0)
+  viewerIds     String[] @db.ObjectId
+  accessLogs    TokenAccessLog[]
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model TokenAccessLog {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  accessToken String   @db.ObjectId
+  token       SharedPortfolioAccess @relation(fields: [accessToken], references: [id], onDelete: Cascade)
+  fingerprint String?
+  ipAddress   String?
+  userAgent   String?
+  timestamp   DateTime @default(now())
+}
+
+model Account {
+  id                String  @id @default(auto()) @map("_id") @db.ObjectId
+  userId            String  @db.ObjectId
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.String
+  access_token      String? @db.String
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.String
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  sessionToken String   @unique
+  userId       String   @db.ObjectId
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+enum Visibility {
+  PRIVATE
+  PUBLIC
+  SMART_SHARED
+} 
