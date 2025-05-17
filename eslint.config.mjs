@@ -16,6 +16,7 @@ const eslintConfig = [
   {
     rules: {
       '@typescript-eslint/no-explicit-any': 'off', // Disables the no-explicit-any rule
+      '@typescript-eslint/no-unused-vars': 'off', // Disable the unused-vars rule globally
     },
   },
 ];

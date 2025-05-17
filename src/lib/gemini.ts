@@ -129,6 +129,7 @@ export async function generatePortfolioInsights(
       } catch (error) {
         console.error(`Attempt ${attempts + 1} failed:`, error);
         lastError = error;
+        console.log("lastError", lastError);
         attempts++;
         if (attempts === maxAttempts) break;
         // Wait before retrying
