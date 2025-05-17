@@ -1,8 +1,7 @@
 import { getServerSession } from "next-auth";
-// import { authOptions } from "@/lib/auth";
+import { authOptions } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import SignInForm from "@/components/SignInForm";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
 export default async function SignInPage() {
   const session = await getServerSession(authOptions);
@@ -11,8 +10,7 @@ export default async function SignInPage() {
   console.log("authOptions", authOptions);
   if (session) {
     redirect("/dashboard");
-  }
-  else {
+  } else {
     console.log("No session found, showing sign in page");
   }
 

@@ -1,13 +1,13 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { fetchBatchPrices } from "@/lib/priceFetcher";
 import { generatePortfolioInsights } from "@/lib/gemini";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
 
 // GET portfolio by ID
 export async function GET(
-  request: Request,
+  request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
@@ -89,7 +89,7 @@ export async function GET(
 
 // Update portfolio
 export async function PUT(
-  request: Request,
+  request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
@@ -197,4 +197,12 @@ export async function PUT(
       { status: 500 }
     );
   }
+}
+
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  const session = await getServerSession(authOptions);
+  // ... rest of the function implementation ...
 }
